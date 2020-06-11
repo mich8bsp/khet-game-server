@@ -17,8 +17,12 @@ object GameManager  {
 
   def joinGame: Future[Player] = {
     gameManagerActor.ask(JoinGameRequest)
-      .mapTo[Future[Player]]
-      .flatMap(identity)
+      .mapTo[Player]
+  }
+
+  def resetAllGames: Future[Boolean] = {
+    gameManagerActor.ask(ClearGamesRequest)
+      .mapTo[Boolean]
   }
 }
 
@@ -26,7 +30,9 @@ class GameManagerActor extends Actor {
   val gameLobby: ActorRef = context.actorOf(Props(new GameLobbyActor))
   override def receive: Receive = {
     case JoinGameRequest => gameLobby.tell(JoinGameRequest, sender)
+    case ClearGamesRequest => gameLobby.tell(ClearGamesRequest, sender)
   }
 }
 
 case object JoinGameRequest
+case object ClearGamesRequest

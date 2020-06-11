@@ -15,4 +15,8 @@ class GameController extends Controller{
     request: Request => GameManager.joinGame
   }
 
+  get("/game/clear"){
+    request: Request => GameManager.resetAllGames
+  }
+
 }

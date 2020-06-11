@@ -15,7 +15,11 @@ class GameLobbyActor extends Actor{
       val roomNotFull: Option[GameRoom] = gameRooms.values.find(_.roomState == EGameRoomState.AWAITING_PLAYERS)
       val roomToJoin: GameRoom = roomNotFull.getOrElse(createRoom)
       val newPlayer: Player = roomToJoin.joinAsPlayer
-      sender().tell(Future.successful(newPlayer), self)
+      sender().tell(newPlayer, self)
+    case ClearGamesRequest => {
+      gameRooms.clear()
+      sender().tell(true, self)
+    }
   }
 
   private def createRoom: GameRoom = {
