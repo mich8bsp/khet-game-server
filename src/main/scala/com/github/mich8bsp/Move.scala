@@ -19,5 +19,5 @@ case class SwitchMove( pos1: BoardPos,  pos2: BoardPos) extends Move {
 }
 
 case class BoardPos(i: Int, j: Int){
-  def reverse(): BoardPos = BoardPos(GameConfig.COLS-i, GameConfig.ROWS-j)
+  def reverse(): BoardPos = BoardPos(GameConfig.ROWS-i-1, GameConfig.COLS-j-1)
 }
