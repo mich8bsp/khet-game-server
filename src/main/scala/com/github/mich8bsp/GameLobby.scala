@@ -8,7 +8,7 @@ import scala.collection.mutable
 import scala.concurrent.Future
 
 class GameLobbyActor extends Actor{
-  private val gameRooms: mutable.Map[UUID, GameRoom] = mutable.Map[UUID, GameRoom]
+  private val gameRooms: mutable.Map[UUID, GameRoom] = mutable.Map[UUID, GameRoom]()
 
   override def receive: Receive = {
     case JoinGameRequest =>
