@@ -21,17 +21,17 @@ class GameController extends Controller{
 
   post("/game/make_pos_move"){
     request: MakePositionMoveRequest =>
-      GameManager.makeMove(request.move, request.playerId)
+      GameManager.makeMove(request.move, UUID.fromString(request.playerId))
   }
 
   post("/game/make_rot_move"){
     request: MakeRotationMoveRequest =>
-      GameManager.makeMove(request.move, request.playerId)
+      GameManager.makeMove(request.move, UUID.fromString(request.playerId))
   }
 
   post("/game/make_switch_move"){
     request: MakeSwitchMoveRequest=>
-      GameManager.makeMove(request.move, request.playerId)
+      GameManager.makeMove(request.move, UUID.fromString(request.playerId))
   }
 
   get("/game/get_latest_move"){
@@ -50,16 +50,16 @@ class GameController extends Controller{
 
 case class MakePositionMoveRequest(
                                   move: PositionMove,
-                                  playerId: UUID
+                                  playerId: String
                                   )
 
 case class MakeRotationMoveRequest(
                                   move: RotationMove,
-                                  playerId: UUID
+                                  playerId: String
                                   )
 case class MakeSwitchMoveRequest(
                                 move: SwitchMove,
-                                playerId: UUID
+                                playerId: String
                                 )
 
 case class GetMoveRequest(
