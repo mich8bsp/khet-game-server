@@ -20,3 +20,4 @@ resolvers ++= Seq(
 libraryDependencies += "com.twitter" % "finatra-http_2.12" % versions.finatra
 libraryDependencies += "com.twitter" % "finatra-slf4j_2.12" % "2.13.0"
 libraryDependencies += "ch.qos.logback" % "logback-classic" % versions.logback
+libraryDependencies +=  "com.typesafe.akka" %% "akka-actor" % "2.6.6"

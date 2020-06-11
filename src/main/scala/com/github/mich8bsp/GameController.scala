@@ -7,15 +7,12 @@ class GameController extends Controller{
 
   println("game controller created")
 
-  post("/make-move/") { request: Move =>
-    println(s"got move request $request")
-  }
-
   get("/server/status"){ request: Request =>
     "ok"
   }
+
+  post("/game/join"){
+    request: Request => GameManager.joinGame
+  }
+
 }
-
-case class Move(
-
-               )
