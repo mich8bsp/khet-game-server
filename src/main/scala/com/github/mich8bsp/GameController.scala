@@ -20,24 +20,24 @@ class GameController extends Controller{
   }
 
   post("/game/make_pos_move"){
-    request: PositionMove with PlayerId =>
-      GameManager.makeMove(request, request.playerId)
+    request: MakePositionMoveRequest =>
+      GameManager.makeMove(request.move, request.playerId)
   }
 
   post("/game/make_rot_move"){
-    request: RotationMove with PlayerId=>
-      GameManager.makeMove(request, request.playerId)
+    request: MakeRotationMoveRequest =>
+      GameManager.makeMove(request.move, request.playerId)
   }
 
   post("/game/make_switch_move"){
-    request: SwitchMove with PlayerId=>
-      GameManager.makeMove(request, request.playerId)
+    request: MakeSwitchMoveRequest=>
+      GameManager.makeMove(request.move, request.playerId)
   }
 
   get("/game/get_latest_move"){
     request: GetMoveRequest => {
       GameManager.getLatestMove(UUID.fromString(request.playerId))
-        .map(GetMoveResponse)
+        .map(move => GetMoveResponse(move, move.map(_.move.moveType).getOrElse(EMoveType.NONE)))
     }
   }
 
@@ -48,10 +48,25 @@ class GameController extends Controller{
 
 }
 
+case class MakePositionMoveRequest(
+                                  move: PositionMove,
+                                  playerId: UUID
+                                  )
+
+case class MakeRotationMoveRequest(
+                                  move: RotationMove,
+                                  playerId: UUID
+                                  )
+case class MakeSwitchMoveRequest(
+                                move: SwitchMove,
+                                playerId: UUID
+                                )
+
 case class GetMoveRequest(
                          @QueryParam playerId: String
                          )
 
 case class GetMoveResponse(
-                          move: Option[MoveRecord]
+                          move: Option[MoveRecord],
+                          moveType: EMoveType
                           )
