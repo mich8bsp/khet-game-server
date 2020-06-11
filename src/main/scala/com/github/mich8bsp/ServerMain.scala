@@ -8,7 +8,7 @@ import com.twitter.finatra.http.filters.{CommonFilters, LoggingMDCFilter, TraceI
 import com.twitter.finatra.http.routing.HttpRouter
 
 class Server extends HttpServer{
-  override def defaultHttpPort: String = ":9992"
+  override def defaultHttpPort: String = s":${System.getenv("PORT")}"
 
   override protected def configureHttp(router: HttpRouter): Unit = {
     router
