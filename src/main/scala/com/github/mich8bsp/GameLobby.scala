@@ -5,21 +5,39 @@ import java.util.UUID
 import akka.actor.Actor
 
 import scala.collection.mutable
-import scala.concurrent.Future
 
 class GameLobbyActor extends Actor{
   private val gameRooms: mutable.Map[UUID, GameRoom] = mutable.Map[UUID, GameRoom]()
+  private val playersById: mutable.Map[UUID, Player] = mutable.Map[UUID, Player]()
 
   override def receive: Receive = {
     case JoinGameRequest =>
       val roomNotFull: Option[GameRoom] = gameRooms.values.find(_.roomState == EGameRoomState.AWAITING_PLAYERS)
       val roomToJoin: GameRoom = roomNotFull.getOrElse(createRoom)
       val newPlayer: Player = roomToJoin.joinAsPlayer
+      playersById.put(newPlayer.playerId, newPlayer)
       sender().tell(newPlayer, self)
-    case ClearGamesRequest => {
+    case ClearGamesRequest =>
       gameRooms.clear()
+      playersById.clear()
       sender().tell(true, self)
+    case MakeMove(move, playerId) => {
+      val player: Option[Player] = playersById.get(playerId)
+      val gameRoom: Option[GameRoom] = player.flatMap(p => gameRooms.get(p.roomId))
+      val makingMoveRes: Boolean = gameRoom.exists(room => {
+        room.addMove(move, player.get.color)
+      })
+      sender.tell(makingMoveRes, self)
     }
+    case GetMove(playerId) => {
+      val gameRoom: Option[GameRoom] =getRoomByPlayerId(playerId)
+      sender.tell(gameRoom.flatMap(_.getLatestMove), self)
+    }
+  }
+
+  private def getRoomByPlayerId(playerId: UUID): Option[GameRoom] = {
+    val player: Option[Player] = playersById.get(playerId)
+    player.flatMap(p => gameRooms.get(p.roomId))
   }
 
   private def createRoom: GameRoom = {
@@ -34,6 +52,7 @@ case class GameRoom(
                    ){
   var player1: Option[Player] = None
   var player2: Option[Player] = None
+  val gameHistory: GameHistory = GameHistory()
 
   def roomState: EGameRoomState = {
     if(player1.isDefined && player2.isDefined){
@@ -55,4 +74,11 @@ case class GameRoom(
       player1 = Some(Player.create(id, EPlayerColor.GREY))
       player1.get
   }
+
+  def addMove(move: Move, playerColor: EPlayerColor): Boolean = {
+    gameHistory.addMove(move, playerColor)
+    true
+  }
+
+  def getLatestMove: Option[MoveRecord] = gameHistory.getLatestMove
 }
