@@ -37,6 +37,12 @@ class GameLobbyActor extends Actor{
 
       sender.tell(moveAdapted, self)
     }
+    case IsGameRoomReady(playerId) => {
+      val gameRoom: Option[GameRoom] = getRoomByPlayerId(playerId)
+      val isReady: Boolean = gameRoom.exists(_.roomState == EGameRoomState.GAME_ONGOING)
+
+      sender.tell(isReady, self)
+    }
   }
 
   private def getRoomByPlayerId(playerId: UUID): Option[GameRoom] = {

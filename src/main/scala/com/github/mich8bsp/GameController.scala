@@ -15,6 +15,11 @@ class GameController extends Controller{
     "ok"
   }
 
+  get("/game/is_room_ready"){
+    request: RequestByPlayerId =>
+      GameManager.isGameRoomReady(UUID.fromString(request.playerId))
+  }
+
   post("/game/join"){
     request: Request => GameManager.joinGame
   }
@@ -35,7 +40,7 @@ class GameController extends Controller{
   }
 
   get("/game/get_latest_move"){
-    request: GetMoveRequest => {
+    request: RequestByPlayerId => {
       GameManager.getLatestMove(UUID.fromString(request.playerId))
         .map(move => GetMoveResponse(move, move.map(_.move.moveType).getOrElse(EMoveType.NONE)))
     }
@@ -62,7 +67,7 @@ case class MakeSwitchMoveRequest(
                                 playerId: String
                                 )
 
-case class GetMoveRequest(
+case class RequestByPlayerId(
                          @QueryParam playerId: String
                          )
 
