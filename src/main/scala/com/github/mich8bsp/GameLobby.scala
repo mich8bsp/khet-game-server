@@ -30,8 +30,12 @@ class GameLobbyActor extends Actor{
       sender.tell(makingMoveRes, self)
     }
     case GetMove(playerId) => {
-      val gameRoom: Option[GameRoom] =getRoomByPlayerId(playerId)
-      sender.tell(gameRoom.flatMap(_.getLatestMove), self)
+      val player: Option[Player] = playersById.get(playerId)
+      val gameRoom: Option[GameRoom] = getRoomByPlayerId(playerId)
+      val move = gameRoom.flatMap(_.getLatestMove)
+      val moveAdapted = move.map(_.adaptForPlayer(player.get.color))
+
+      sender.tell(moveAdapted, self)
     }
   }
 

@@ -14,4 +14,13 @@ case class GameHistory(){
   def getPlayerForCurrentTurn: EPlayerColor = getLatestMove.map(_.playerColor.other()).getOrElse(EPlayerColor.GREY)
 }
 
-case class MoveRecord(move: Move, playerColor: EPlayerColor, recordId: Long)
+case class MoveRecord(move: Move, playerColor: EPlayerColor, recordId: Long) {
+  def adaptForPlayer(playerToAdaptTo: EPlayerColor): MoveRecord = {
+    if(playerToAdaptTo == playerColor){
+      this
+    }else{
+      this.copy(move = move.reverse())
+    }
+  }
+
+}
